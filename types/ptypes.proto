@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "tolling/types";
+
+service DistanceAggregator {
+    rpc AggregateDistance(AggregatorDistanceRequest) returns (None);
+    rpc GetInvoice(GetInvoiceRequest) returns (GetInvoiceResponse);
+}
+
+message None{}
+
+message GetInvoiceRequest {
+    int64 ObuID = 1;
+}
+
+message GetInvoiceResponse {
+    int64 ObuID = 1;
+    double TotalDistance = 2;
+    double InvoiceAmount = 3;
+}
+
+message AggregatorDistanceRequest {
+    int64 ObuID = 1;
+    double Value = 2;
+    int64 Unix = 3;
+}
+

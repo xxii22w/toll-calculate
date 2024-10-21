@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:7.3.2
+    container_name: broker
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+# 服务名称：prometheus
+  prometheus:
+    # 使用的Docker镜像，这里是 Prometheus 监控系统的官方镜像
+    image: prom/prometheus
+    # 为容器指定一个名称
+    container_name: prometheus
+    # 定义卷挂载，将主机目录挂载到容器内的目录
+    command:
+      # 指定 Prometheus 配置文件的位置
+      - '--config.file=./config/prometheus.yml'
+      # 启用 Prometheus 的生命周期功能
+      - '--web.enable-lifecycle'
+# 端口映射，将容器的9090端口映射到宿主机的9090端口
+    ports:
+      - "9090:9090"
+    # 定义重启策略，除非明确停止，否则总是尝试重启容器
+    restart: unless-stopped
