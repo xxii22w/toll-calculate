@@ -2,41 +2,26 @@ version: "3"
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper
+    image: confluentinc/cp-zookeeper:7.8.0
     container_name: zookeeper
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_CLIENT_PORT: 2181 # ZooKeeper客户端连接端口，默认是2181
+      ZOOKEEPER_TICK_TIME: 2000 # ZooKeeper的tick时间，用于心跳检测和会话超时的基准时间间隔，这里设置为2000毫秒
 
   broker:
-    image: confluentinc/cp-kafka:7.3.2
+    image: confluentinc/cp-kafka:7.8.0
     container_name: broker
     ports:
       - "9092:9092"
     depends_on:
       - zookeeper
     environment:
-      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_ID: 1 #  Kafka集群中Broker的唯一标识符
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      # 定义了监听器名称和它们对应的安全协议
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      # 定义了客户端用于连接到Kafka集群的监听器列表
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-# 服务名称：prometheus
-  prometheus:
-    # 使用的Docker镜像，这里是 Prometheus 监控系统的官方镜像
-    image: prom/prometheus
-    # 为容器指定一个名称
-    container_name: prometheus
-    # 定义卷挂载，将主机目录挂载到容器内的目录
-    command:
-      # 指定 Prometheus 配置文件的位置
-      - '--config.file=./config/prometheus.yml'
-      # 启用 Prometheus 的生命周期功能
-      - '--web.enable-lifecycle'
-# 端口映射，将容器的9090端口映射到宿主机的9090端口
-    ports:
-      - "9090:9090"
-    # 定义重启策略，除非明确停止，否则总是尝试重启容器
-    restart: unless-stopped

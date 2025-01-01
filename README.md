@@ -1,5 +1,16 @@
 ## 通行费计算器
 * 首先是安装依赖，kafka,protobuf,rpc,prometheus,logrus,websocket
+* prometheus  
+docker run -d \
+  --name prometheus \
+  -p 127.0.0.1:9090:9090 \
+  -v /root/Code/toll-calculate/config/prometheus.yml:/etc/prometheus/prometheus.yml \
+  prom/prometheus
+prometheus 在自定义配置环境的时候，如果出现了error scraping target: get "http://127.0.0.1:4000/metrics": dial tcp 127.0.0.1:4000: connect: connection refused的情况
+我们只需要ipconfig找到docker的ip地址到prometheus配置文件里面替换即可
+* grafana
+docker run -d --name=grafana -p 3000:3000 grafana/grafana-oss
+docker inspect 查看容器的ip,进入grafana的ui界面，创建数据源，输入http://查看到的ip:9090/就行
 ### 项目由一下部分组成：
 * obu 
 --> 随即生成id和坐标位置来模拟通行位置
