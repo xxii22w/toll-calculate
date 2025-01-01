@@ -32,9 +32,6 @@ docker inspect 查看容器的ip,进入grafana的ui界面，创建数据源，�
 *  make gateway 来测试服务是否可行
 -> http://localhost:6000/invoice?obu=6534164431199076443
 
-代码有不错的可拓展性，比如说middleware，里面可以自由拓展，并且如果想再添加中间件也很容易
-store 也可以添加自己想用的数据库来替换，重写对于的接口就行
-
 ## 添加.env
 AGG_HTTP_ENDPOINT=:4000
 AGG_GRPC_ENDPOINT=:3001
