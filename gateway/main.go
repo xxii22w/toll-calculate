@@ -43,7 +43,7 @@ func (h *InvoiceHandler) handleGetInvoice(w http.ResponseWriter, r *http.Request
 	}
 	inv, err := h.client.GetInvoice(context.Background(), &types.GetInvoiceRequest{
 		ObuID: int64(obuID),
-	})
+	}) 
 	if err != nil {
 		return err
 	}
